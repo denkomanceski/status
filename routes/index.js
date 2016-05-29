@@ -70,7 +70,7 @@ router.get('/status/data', function(req, res){
       servers['global'][servers['global'].length-1].timestamp = Date.parse(line.substring(0, '2016-05-29 10:22:17.7137'.length));
     }
     else if(globalMinutes && isGlobal){
-      servers['global'][servers['global'].length-1].completeProcess = line.substring(line.indexOf('Average time per item COMPLETE PROCESS: ')+'Average time per item COMPLETE PROCESS: '.length,  line.length-1)
+      servers['global'][servers['global'].length-1].completeProcess = line.substring(line.indexOf('Average time per item COMPLETE PROCESS: ')+'Average time per item COMPLETE PROCESS: '.length,  line.length-3)
       isGlobal = false;
     }
     console.log('Line from file:', line);
