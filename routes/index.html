@@ -53,10 +53,10 @@
 <div class="container">
 <div class="row">
     <div class="col-xs-3 " >
-        <div class="panel panel-primary">
+        <div class="panel panel-danger">
             <div class="panel-heading">Global</div>
         </div>
-        <div class="panel panel-primary" ng-repeat="para in global | limitTo: limitServer">
+        <div class="panel panel-danger" ng-repeat="para in global | limitTo: limitServer">
             <center>
             <p style="font-weight: bold">Total for last: {{para.current}}</p>
             <p>Added: {{para.added | number: 2}}</p>
