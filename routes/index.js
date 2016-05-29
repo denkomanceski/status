@@ -28,6 +28,7 @@ router.get('/status/data', function(req, res){
     }
     res.send(servers);
   })
+  var isGlobal = false;
   lineReader.on('line', function (line) {
     var statisticsFor = line.indexOf("Statistics for ") > -1;
     var totalFor = line.indexOf("Number of items matched by fingerprint: ") > -1;
@@ -35,7 +36,9 @@ router.get('/status/data', function(req, res){
 
     var globalTotal = line.indexOf('Number of items matched by text: ') > -1;
     var processedAdded = line.indexOf('Number of PROCESSED/ADDED') > -1;
+    var globalMinutes = line.indexOf('Average time per item COMPLETE PROCESS: ') > -1;
     if(statisticsFor){
+      isGlobal = false;
       var serverName = line.substring(line.indexOf("Statistics for ")+'Statistics for '.length, line.length-1).replace('"', '').trim().replace(" ", "_");
       if(!servers[serverName])
         servers[serverName] = [];
@@ -51,7 +54,7 @@ router.get('/status/data', function(req, res){
       servers[lastServerName][servers[lastServerName].length - 1].perMinute = lastPerMinute;
     }
     else if(globalTotal){
-
+      isGlobal = true;
       var total = parseInt(line.substring(line.indexOf("Total processed: ")+"Total processed: ".length, line.length));
       var current = total
       if(servers['global'].length >= 1){
@@ -65,6 +68,10 @@ router.get('/status/data', function(req, res){
       servers['global'][servers['global'].length-1].processed = arrs[0];
       servers['global'][servers['global'].length-1].added = arrs[1];
       servers['global'][servers['global'].length-1].timestamp = Date.parse(line.substring(0, '2016-05-29 10:22:17.7137'.length));
+    }
+    else if(globalMinutes && isGlobal){
+      servers['global'][servers['global'].length-1].completeProcess = line.substring(line.indexOf('Average time per item COMPLETE PROCESS: ')+'Average time per item COMPLETE PROCESS: '.length,  line.length-1)
+      isGlobal = false;
     }
     console.log('Line from file:', line);
   });
