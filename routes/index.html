@@ -25,7 +25,7 @@
                 $scope.limitServer--;
             }
             $scope.items = {};
-            $http.get('http://92.55.107.130:3000/status/data').then(function(data) {
+            $http.get('http://92.55.107.130/status/data').then(function(data) {
                 data = data.data;
                 $scope.items = data;
                 $scope.global = $scope.items.global;
