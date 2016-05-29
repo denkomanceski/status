@@ -65,7 +65,7 @@
             <p style="font-weight: bold">Total for last: {{para.current}}</p>
             <p>Added: {{para.added | number: 2}}</p>
             <p>Processed: {{para.processed | number: 2}}</p>
-                <p style="font-weight: bold">{{para.completeProcess | number: 2}}</p>
+                <p style="font-weight: bold">Processed per min: {{para.completeProcess | number: 3}}</p>
                 <p>Time: {{para.timestamp | date: 'dd.MM - hh:mm:ss'}}</p>
             </center>
             </div>
