@@ -8,12 +8,12 @@ console.log(path);
 
 
 
-router.get('/', function(req, res, next) {
+router.get('/status', function(req, res, next) {
 
   res.sendFile(__dirname+'/index.html');
 });
 
-router.get('/data', function(req, res){
+router.get('/status/data', function(req, res){
   var servers = {global: []};
   var lastServerName = '';
   var lastTotalProcessed = '';
