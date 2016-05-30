@@ -65,7 +65,7 @@
             <p style="font-weight: bold">Total for last: {{para.current}}</p>
             <p>Added: {{para.added | number: 2}}</p>
             <p>Processed: {{para.processed | number: 2}}</p>
-                <p style="font-weight: bold">Average per item: {{para.completeProcess | number: 3}}s</p>
+                <p style="font-weight: bold">Average per item: {{para.completeProcess | number: 3}} s</p>
                 <p>Time: {{para.timestamp | date: 'dd.MM - hh:mm:ss'}}</p>
             </center>
             </div>
@@ -82,6 +82,7 @@
                 <center>
                     <p>Per minute: {{item.perMinute | number: 2}}</p>
                     <p>Total: {{item.total}}</p>
+                    <p>Errored: {{item.errors}}</p>
                 </center>
             </div>
         </div>
