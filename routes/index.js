@@ -41,7 +41,34 @@ function checkQueue(cb){
     })
 })
 }
-   
+
+function countAll(cb){
+     var connection1 = new sql.Connection(config, function (err) {
+    var request = new sql.Request(connection1);
+    request.query(`
+         SELECT COUNT([ID]) as total
+        FROM [dbo].[tblZampMediaLogItem]
+    `, (err, rows) => {
+        console.log(err, rows);
+        if(rows.length > 0)
+        cb(rows[0]);
+    })
+})
+}
+ function repo(cb){
+     var connection1 = new sql.Connection(config, function (err) {
+    var request = new sql.Request(connection1);
+    request.query(`
+         SELECT COUNT([ID]) as total
+        FROM [dbo].[tblZampMediaLogItem]
+        WHERE IsSong = 1;
+    `, (err, rows) => {
+        console.log(err, rows);
+        if(rows.length > 0)
+        cb(rows[0]);
+    })
+})
+}  
 router.get('/status', function (req, res, next) {
 
     res.sendFile(__dirname + '/index.html');
@@ -54,6 +81,16 @@ router.get('/status/queue', function(req, res) {
 
 router.get('/status/recognized', function(req, res) {
     checkRecognized(data => {
+        res.send(data);
+    })
+})
+router.get('/status/total', function(req, res) {
+    countAll((data) => {
+        res.send(data);
+    })
+})
+router.get('/status/repo', function(req, res) {
+    repo((data) => {
         res.send(data);
     })
 })
