@@ -78,7 +78,11 @@ router.get('/status/queue', function(req, res) {
         res.send(data);
     })
 })
-
+router.get('/status/resetStatistics', function(req, res) {
+    fs.writeFile(path, '', function(err) {
+        res.send({done: true}); 
+    })
+})
 router.get('/status/recognized', function(req, res) {
     checkRecognized(data => {
         res.send(data);
