@@ -12,28 +12,51 @@ var config = {
     port: '5353',
     database: "dbMediaLogger",
 };
-
-var connection1 = new sql.Connection(config, function (err) {
+function checkRecognized(cb){
+    var connection1 = new sql.Connection(config, function (err) {
     var request = new sql.Request(connection1);
     request.query(`
         SELECT COUNT([ID]) as recognized
         FROM [dbo].[tblZampMediaLogItem]
         WHERE IsSong = 1 AND NumberOfChecks = 1 AND TrackID > 0
-        
-        SELECT COUNT([ID]) as queue
-        FROM [dbo].[tblZampMediaLogItem]
-        WHERE IsSong = 1 AND NumberOfChecks = 0
-
-
     `, (err, rows) => {
         console.log(err, rows);
+        f(rows.length > 0)
+        cb(rows[0]);
     })
 })
+}
+
+function checkQueue(cb){
+    var connection1 = new sql.Connection(config, function (err) {
+    var request = new sql.Request(connection1);
+    request.query(`
+         SELECT COUNT([ID]) as queue
+        FROM [dbo].[tblZampMediaLogItem]
+        WHERE IsSong = 1 AND NumberOfChecks = 0
+    `, (err, rows) => {
+        console.log(err, rows);
+        if(rows.length > 0)
+        cb(rows[0]);
+    })
+})
+}
+   
 router.get('/status', function (req, res, next) {
 
     res.sendFile(__dirname + '/index.html');
 });
+router.get('/status/queue', function(req, res) {
+    checkQueue((data) => {
+        res.send(data);
+    })
+})
 
+router.get('/status/recognized', function(req, res) {
+    checkRecognized(data => {
+        res.send(data);
+    })
+})
 router.get('/status/data', function (req, res) {
     var servers = {global: []};
     var lastServerName = '';
