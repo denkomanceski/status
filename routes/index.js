@@ -5,8 +5,23 @@ var fs = require('fs');
 
 var path = fs.readFileSync(__dirname + '/url', 'utf-8');
 console.log(path);
+var config = {
+    user: 'zampdbadmin',
+    password: 'Zamp123',
+    server: '92.55.107.130, 5353',
+    database: "dbMediaLogger",
+};
 
-
+var connection1 = new sql.Connection(config, function (err) {
+    var request = new sql.Request(connection1);
+    request.query(`
+        SELECT COUNT([ID])
+        FROM [dbo].[tblZampMediaLogItem]
+        WHERE IsSong = 1 AND NumberOfChecks = 1 AND TrackID > 0
+    `, (err, rows) => {
+        console.log(err, rows);
+    })
+})
 router.get('/status', function (req, res, next) {
 
     res.sendFile(__dirname + '/index.html');
