@@ -15,9 +15,15 @@ var config = {
 var connection1 = new sql.Connection(config, function (err) {
     var request = new sql.Request(connection1);
     request.query(`
-        SELECT COUNT([ID])
+        SELECT COUNT([ID]) as recognized
         FROM [dbo].[tblZampMediaLogItem]
         WHERE IsSong = 1 AND NumberOfChecks = 1 AND TrackID > 0
+        
+        SELECT COUNT([ID]) as queue
+        FROM [dbo].[tblZampMediaLogItem]
+        WHERE IsSong = 1 AND NumberOfChecks = 0
+
+
     `, (err, rows) => {
         console.log(err, rows);
     })
