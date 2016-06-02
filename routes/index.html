@@ -32,6 +32,14 @@
                 delete $scope.items.global;
                 console.log(data);
             })
+            $scope.recognized = "Loading number of recognized.."
+            $scope.queue = "Loading number of queue.."
+            $http.get('http://92.55.107.130/status/recognized').then(function(data) {
+                $scope.recognized = 'Recognized: '+data.data+' songs.';
+            })
+            $http.get('http://92.55.107.130/status/queue').then(function(data) {
+                $scope.queue = 'Queue: '+data.data+' songs.';
+            })
         })
     </script>
 </head>
@@ -54,6 +62,14 @@
     </div><!-- /.container-fluid -->
 </nav>
 <div class="container">
+   <div class="row">
+       <div class="col-xs-3">
+           <h3>{{recognized}}</h3>
+       </div>
+       <div class="col-xs-3">
+           <h3>{{queue}}</h3>
+       </div>
+   </div>
 <div class="row">
     <div class="col-xs-3 " >
         <div class="panel panel-danger">
