@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var fs = require('fs');
 /* GET home page. */
-
+var sql = require('mssql');
 var path = fs.readFileSync(__dirname + '/url', 'utf-8');
 console.log(path);
 var config = {
