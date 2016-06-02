@@ -35,6 +35,7 @@
             }
             $scope.inc = 0;
             $scope.incInc = function(){
+                console.log($scope.inc);
                 $scope.inc++;
             }
             $scope.decrease = function(para){
@@ -49,20 +50,18 @@
                 delete $scope.items.global;
                 console.log(data);
             })
-            $scope.recognized = "Loading number of recognized.."
-            $scope.queue = "Loading number of queue.."
-            $scope.total = "Loading total number of logs.."
+           
             $http.get('http://92.55.107.130/status/recognized', { headers: { 'Cache-Control' : 'no-cache' } }).then(function(data) {
-                $scope.recognized = 'Recognized: '+data.data.recognized+' songs.';
+                $scope.recognized = data.data.recognized;
             })
             $http.get('http://92.55.107.130/status/total', { headers: { 'Cache-Control' : 'no-cache' } }).then(function(data) {
-                $scope.total = 'Total logs: '+data.data.total+' songs.';
+                $scope.total = data.data.total;
             })
             $http.get('http://92.55.107.130/status/queue', { headers: { 'Cache-Control' : 'no-cache' } }).then(function(data) {
-                $scope.queue = 'Queue: '+data.data.queue+' songs.';
+                $scope.queue = data.data.queue;
             })
              $http.get('http://92.55.107.130/status/repo', { headers: { 'Cache-Control' : 'no-cache' } }).then(function(data) {
-                $scope.repo = 'VertexID: '+data.data.repo;
+                $scope.repo = data.data.repo;
             })
         })
     </script>
@@ -88,20 +87,25 @@
 <div class="container">
    <div class="row">
        <div class="col-xs-3">
-           <p>{{recognized}}</p>
+            <p ng-if="!recognized">Loading number of recognized..</p>
+           <p ng-if="recognized > 0">Recognized: {{recognized | number}} songs.</p>
        </div>
        <div class="col-xs-3">
-           <p>{{queue}}</p>
+            <p ng-if="!queue">Loading number of queue..</p>
+           <p ng-if="queue > 0">Queue: {{queue | number}} logs.</p>
        </div>
        <div class="col-xs-3">
-           <p>{{total}}</p>
+           <p ng-if="!total">Loading number of total..</p>
+           <p ng-if="total > 0">Total: {{total | number}} logs.</p>
        </div>
    </div>
 <div class="row">
     <div class="col-xs-3 " >
         <div class="panel panel-danger" ng-click="incInc()">
             <div class="panel-heading">Global
-                <p ng-if="inc > 10"></p>
+                <p ng-if="inc > 10">
+                    VertexID: {{repo | number}}
+                </p>
             </div>
         </div>
         <div class="panel panel-danger" ng-repeat="para in global | limitTo: limitServer">
@@ -126,8 +130,8 @@
             <div class="panel-body">
                 <center>
                     <p>Per minute: {{item.perMinute | number: 2}}</p>
-                    <p>Total: {{item.total}}</p>
-                    <p>Errored: {{item.errors}}</p>
+                    <p>Total: {{item.total | number: 2}}</p>
+                    <p>Errored: {{item.errors | number: 2}}</p>
                 </center>
             </div>
         </div>

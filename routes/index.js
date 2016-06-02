@@ -59,7 +59,7 @@ function countAll(cb){
      var connection1 = new sql.Connection(config, function (err) {
     var request = new sql.Request(connection1);
     request.query(`
-         SELECT COUNT([ID]) as total
+         SELECT COUNT([ID]) as repo
         FROM [dbo].[tblZampMediaLogItem]
         WHERE IsSong = 1;
     `, (err, rows) => {
