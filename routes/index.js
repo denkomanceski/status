@@ -8,7 +8,8 @@ console.log(path);
 var config = {
     user: 'zampdbadmin',
     password: 'Zamp123',
-    server: '92.55.107.130, 5353',
+    server: '92.55.107.130',
+    port: '5353',
     database: "dbMediaLogger",
 };
 
