@@ -14,10 +14,14 @@
             border-left: 3px solid #a94442!important;
         }
     </style>
+    <script src="humanize-duration/humanize-duration.js"></script>
+    <script src="moment/min/moment.min.js"><script>
+    <script src="moment/min/locales.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.11/angular.min.js"></script>
+    <script src="angular-timer/dist/angular-timer.js"></script>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"/>
     <script>
-        var app = angular.module('app', []);
+        var app = angular.module('app', ['timer']);
         app.config(['$httpProvider', function($httpProvider) {  
                    if (!$httpProvider.defaults.headers.get) {
                 $httpProvider.defaults.headers.get = {};
@@ -43,31 +47,44 @@
                 $scope.limitServer--;
             }
             $scope.items = {};
-            $http.get('http://92.55.107.130/status/data').then(function(data) {
-                data = data.data;
-                $scope.items = data;
-                $scope.global = $scope.items.global;
-                delete $scope.items.global;
-                console.log(data);
-            })
+           
+            $scope.refresh = function(){
+                $scope.recognized = '';
+                $scope.queue = '';
+                $scope.total = '';
+                $scope.$broadcast('timer-reset');
+                $scope.getData();
+                $scope.$broadcast('timer-start');
+            }
             $scope.resetStatistics = function(){
                 $http.get('http://92.55.107.130/status/resetStatistics', { headers: { 'Cache-Control' : 'no-cache' } }).then(function(data) {
                 alert("Statistics deleted, refreshing..")
                 $window.location.reload();
             })
             }
-            $http.get('http://92.55.107.130/status/recognized', { headers: { 'Cache-Control' : 'no-cache' } }).then(function(data) {
-                $scope.recognized = data.data.recognized;
-            })
-            $http.get('http://92.55.107.130/status/total', { headers: { 'Cache-Control' : 'no-cache' } }).then(function(data) {
-                $scope.total = data.data.total;
-            })
-            $http.get('http://92.55.107.130/status/queue', { headers: { 'Cache-Control' : 'no-cache' } }).then(function(data) {
-                $scope.queue = data.data.queue;
-            })
-             $http.get('http://92.55.107.130/status/repo', { headers: { 'Cache-Control' : 'no-cache' } }).then(function(data) {
-                $scope.repo = data.data.repo;
-            })
+            $scope.getData = function(){
+                $http.get('http://92.55.107.130/status/data').then(function(data) {
+                    data = data.data;
+                    $scope.items = data;
+                    $scope.global = $scope.items.global;
+                    delete $scope.items.global;
+                    console.log(data);
+                 })
+                $http.get('http://92.55.107.130/status/recognized', { headers: { 'Cache-Control' : 'no-cache' } }).then(function(data) {
+                    $scope.recognized = data.data.recognized;
+                })
+                $http.get('http://92.55.107.130/status/total', { headers: { 'Cache-Control' : 'no-cache' } }).then(function(data) {
+                    $scope.total = data.data.total;
+                })
+                $http.get('http://92.55.107.130/status/queue', { headers: { 'Cache-Control' : 'no-cache' } }).then(function(data) {
+                    $scope.queue = data.data.queue;
+                })
+                $http.get('http://92.55.107.130/status/repo', { headers: { 'Cache-Control' : 'no-cache' } }).then(function(data) {
+                    $scope.repo = data.data.repo;
+                })
+            }
+            $scope.getData();
+            
         })
     </script>
 </head>
@@ -78,7 +95,12 @@
         <div class="navbar-header">
             <a class="navbar-brand" href="#">Status</a>
         </div>
+          <ul class="nav navbar-nav">
+            <li><a href="#">Autorefresh in: </a></li>
+            <li class="active"><a href="#"><timer interval="1000" max-time-unit="'minute'" finish-callback="refresh()" countdown="120">{{mminutes}} minute{{minutesS}}, {{sseconds}} second{{secondsS}}</timer> <span class="sr-only">(current)</span></a></li>
+          </ul>           
         <form class="navbar-form navbar-right" role="search">
+            
             <b>Limit: </b>
             <button class="btn btn-primary" ng-click="decrease()"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button>
             {{limitServer}}
