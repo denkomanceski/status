@@ -21,7 +21,7 @@ function checkRecognized(cb){
         WHERE IsSong = 1 AND NumberOfChecks = 1 AND TrackID > 0
     `, (err, rows) => {
         console.log(err, rows);
-        f(rows.length > 0)
+        (rows.length > 0)
         cb(rows[0]);
     })
 })
