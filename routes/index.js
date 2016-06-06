@@ -21,8 +21,12 @@ function checkRecognized(cb){
         WHERE IsSong = 1 AND NumberOfChecks = 1 AND TrackID > 0
     `, (err, rows) => {
         console.log(err, rows);
-        (rows.length > 0)
+        if(rows.length > 0)
         cb(rows[0]);
+        else {
+            cb({"recognized": 0});
+        }
+
     })
 })
 }
@@ -38,6 +42,9 @@ function checkQueue(cb){
         console.log(err, rows);
         if(rows.length > 0)
         cb(rows[0]);
+        else {
+            cb({"queue": 0});
+        }
     })
 })
 }
@@ -52,6 +59,9 @@ function countAll(cb){
         console.log(err, rows);
         if(rows.length > 0)
         cb(rows[0]);
+        else {
+            cb({"total": 0});
+        }
     })
 })
 }
@@ -66,6 +76,9 @@ function countAll(cb){
         console.log(err, rows);
         if(rows.length > 0)
         cb(rows[0]);
+        else {
+            cb({"repo": 0});
+        }
     })
 })
 }  
