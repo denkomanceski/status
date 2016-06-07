@@ -115,15 +115,15 @@
    <div class="row">
        <div class="col-xs-3">
             <p ng-if="!recognized">Loading number of recognized..</p>
-           <p ng-if="recognized > 0">Recognized: {{recognized | number}} songs.</p>
+           <p ng-if="recognized >= 0">Recognized: {{recognized | number}} songs.</p>
        </div>
        <div class="col-xs-3">
             <p ng-if="!queue">Loading number of queue..</p>
-           <p ng-if="queue > 0">Queue: {{queue | number}} logs.</p>
+           <p ng-if="queue >= 0">Queue: {{queue | number}} logs.</p>
        </div>
        <div class="col-xs-3">
            <p ng-if="!total">Loading number of total..</p>
-           <p ng-if="total > 0">Total: {{total | number}} logs.</p>
+           <p ng-if="total >= 0">Total: {{total | number}} logs.</p>
        </div>
    </div>
 <div class="row">
