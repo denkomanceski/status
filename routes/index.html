@@ -118,7 +118,7 @@
            <p ng-if="recognized >= 0">Recognized: {{recognized | number}} songs.</p>
        </div>
        <div class="col-xs-3">
-            <p ng-if="!queue">Loading number of queue..</p>
+            <p ng-if="!queue || queue >= 0">Loading number of queue..</p>
            <p ng-if="queue >= 0">Queue: {{queue | number}} logs.</p>
        </div>
        <div class="col-xs-3">
