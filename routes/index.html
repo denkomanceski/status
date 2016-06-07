@@ -63,6 +63,7 @@
             })
             }
             $scope.getData = function(){
+                $scope.queueReq = false;
                 $http.get('http://92.55.107.130/status/data').then(function(data) {
                     data = data.data;
                     $scope.items = data;
@@ -78,6 +79,7 @@
                 })
                 $http.get('http://92.55.107.130/status/queue', { headers: { 'Cache-Control' : 'no-cache' } }).then(function(data) {
                     $scope.queue = data.data.queue;
+                    $scope.queueReq = true;
                 })
                 $http.get('http://92.55.107.130/status/repo', { headers: { 'Cache-Control' : 'no-cache' } }).then(function(data) {
                     $scope.repo = data.data.repo;
@@ -118,7 +120,7 @@
            <p ng-if="recognized >= 0">Recognized: {{recognized | number}} songs.</p>
        </div>
        <div class="col-xs-3">
-            <p ng-if="!queue || queue >= 0">Loading number of queue..</p>
+            <p ng-if="!queue && !queueReq">Loading number of queue..</p>
            <p ng-if="queue >= 0">Queue: {{queue | number}} logs.</p>
        </div>
        <div class="col-xs-3">
