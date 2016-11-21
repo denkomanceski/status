@@ -8,7 +8,7 @@ console.log(path);
 var config = {
     user: 'sa',
     password: 'Zamp321',
-    server: '10.0.0.200',
+    server: 'WINDOWS-DNEP9MF',
     port: '5353',
     database: "MediaLoggerLogs_2016",
 };
