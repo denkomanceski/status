@@ -10,7 +10,7 @@ var config = {
     password: 'Zamp321',
     server: '10.0.0.200',
     port: '5353',
-    database: "MediaLoggerTracks",
+    database: "MediaLoggerLogs_2016",
 };
 function checkRecognized(cb) {
     var connection1 = new sql.Connection(config, function (err) {
