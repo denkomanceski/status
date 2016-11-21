@@ -6,9 +6,9 @@ var sql = require('mssql');
 var path = fs.readFileSync(__dirname + '/url', 'utf-8');
 console.log(path);
 var config = {
-    user: 'sa',
-    password: 'objectX',
-    server: '10.0.0.200',
+    user: 'zampdbadmin',
+    password: 'Zamp123',
+    server: 'WINDOWS-DNEP9MF',
     port: '5353',
     database: "MediaLoggerLogs_2016",
 };
