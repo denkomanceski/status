@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Cache-Control" content="no-cache">
-<meta http-equiv="Expires" content="Sat, 01 Dec 2001 00:00:00 GMT">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="Expires" content="Sat, 01 Dec 2001 00:00:00 GMT">
     <style>
         .panel-primary > .panel-body {
-            border-left: 5px solid #337ab7!important;
+            border-left: 5px solid #337ab7 !important;
         }
-        .panel-danger > .panel-body{
-            border-left: 3px solid #a94442!important;
+
+        .panel-danger > .panel-body {
+            border-left: 3px solid #a94442 !important;
         }
     </style>
     <script src="bower_components/humanize-duration/humanize-duration.js"></script>
@@ -22,33 +23,33 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"/>
     <script>
         var app = angular.module('app', ['timer']);
-        app.config(['$httpProvider', function($httpProvider) {  
-                   if (!$httpProvider.defaults.headers.get) {
+        app.config(['$httpProvider', function ($httpProvider) {
+            if (!$httpProvider.defaults.headers.get) {
                 $httpProvider.defaults.headers.get = {};
             }
             $httpProvider.defaults.headers.get["Cache-Control"] = "no-cache";
             $httpProvider.defaults.headers.get.Pragma = "no-cache";
             $httpProvider.defaults.headers.get["If-Modified-Since"] = "Sat, 01 Jan 2000 00:00:00 GMT";
-            
-        }]);        
-        app.controller('MyCtrl', function($scope, $http, $window){
 
+        }]);
+        app.controller('MyCtrl', function ($scope, $http, $window) {
+            var url = 'http://92.55.107.130';
             $scope.limitServer = 1;
-            $scope.increase = function(para){
+            $scope.increase = function (para) {
                 $scope.limitServer++;
             }
             $scope.inc = 0;
-            $scope.incInc = function(){
+            $scope.incInc = function () {
                 console.log($scope.inc);
                 $scope.inc++;
             }
-            $scope.decrease = function(para){
-                if($scope.limitServer > 1)
-                $scope.limitServer--;
+            $scope.decrease = function (para) {
+                if ($scope.limitServer > 1)
+                    $scope.limitServer--;
             }
             $scope.items = {};
-           
-            $scope.refresh = function(){
+
+            $scope.refresh = function () {
                 $scope.recognized = '';
                 $scope.queue = '';
                 $scope.total = '';
@@ -56,37 +57,37 @@
                 $scope.getData();
                 $scope.$broadcast('timer-start');
             }
-            $scope.resetStatistics = function(){
-                $http.get('http://92.55.107.130/status/resetStatistics', { headers: { 'Cache-Control' : 'no-cache' } }).then(function(data) {
-                alert("Statistics deleted, refreshing..")
-                $window.location.reload();
-            })
+            $scope.resetStatistics = function () {
+                $http.get(url + 'status/resetStatistics', {headers: {'Cache-Control': 'no-cache'}}).then(function (data) {
+                    alert("Statistics deleted, refreshing..")
+                    $window.location.reload();
+                })
             }
-            $scope.getData = function(){
+            $scope.getData = function () {
                 $scope.queueReq = false;
-                $http.get('http://92.55.107.130/status/data').then(function(data) {
+                $http.get(url + 'status/data').then(function (data) {
                     data = data.data;
                     $scope.items = data;
                     $scope.global = $scope.items.global;
                     delete $scope.items.global;
                     console.log(data);
-                 })
-                $http.get('http://92.55.107.130/status/recognized', { headers: { 'Cache-Control' : 'no-cache' } }).then(function(data) {
+                })
+                $http.get(url + 'status/recognized', {headers: {'Cache-Control': 'no-cache'}}).then(function (data) {
                     $scope.recognized = data.data.recognized;
                 })
-                $http.get('http://92.55.107.130/status/total', { headers: { 'Cache-Control' : 'no-cache' } }).then(function(data) {
+                $http.get(url + 'status/total', {headers: {'Cache-Control': 'no-cache'}}).then(function (data) {
                     $scope.total = data.data.total;
                 })
-                $http.get('http://92.55.107.130/status/queue', { headers: { 'Cache-Control' : 'no-cache' } }).then(function(data) {
+                $http.get(url + 'status/queue', {headers: {'Cache-Control': 'no-cache'}}).then(function (data) {
                     $scope.queue = data.data.queue;
                     $scope.queueReq = true;
                 })
-                $http.get('http://92.55.107.130/status/repo', { headers: { 'Cache-Control' : 'no-cache' } }).then(function(data) {
+                $http.get(url + 'status/repo', {headers: {'Cache-Control': 'no-cache'}}).then(function (data) {
                     $scope.repo = data.data.repo;
                 })
             }
             $scope.getData();
-            
+
         })
     </script>
 </head>
@@ -97,16 +98,22 @@
         <div class="navbar-header">
             <a class="navbar-brand" href="#">Status</a>
         </div>
-          <ul class="nav navbar-nav">
+        <ul class="nav navbar-nav">
             <li><a href="#">Autorefresh in: </a></li>
-            <li class="active"><a href="#"><timer interval="1000" max-time-unit="'minute'" finish-callback="refresh()" countdown="120">{{mminutes}} minute{{minutesS}}, {{sseconds}} second{{secondsS}}</timer> <span class="sr-only">(current)</span></a></li>
-          </ul>           
+            <li class="active"><a href="#">
+                <timer interval="1000" max-time-unit="'minute'" finish-callback="refresh()" countdown="120">{{mminutes}}
+                    minute{{minutesS}}, {{sseconds}} second{{secondsS}}
+                </timer>
+                <span class="sr-only">(current)</span></a></li>
+        </ul>
         <form class="navbar-form navbar-right" role="search">
-            
+
             <b>Limit: </b>
-            <button class="btn btn-primary" ng-click="decrease()"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button>
+            <button class="btn btn-primary" ng-click="decrease()"><span class="glyphicon glyphicon-minus"
+                                                                        aria-hidden="true"></span></button>
             {{limitServer}}
-            <button class="btn btn-primary" ng-click="increase()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+            <button class="btn btn-primary" ng-click="increase()"><span class="glyphicon glyphicon-plus"
+                                                                        aria-hidden="true"></span></button>
         </form>
         <!-- Collect the nav links, forms, and other content for toggling -->
 
@@ -114,62 +121,62 @@
     </div><!-- /.container-fluid -->
 </nav>
 <div class="container">
-   <div class="row">
-       <div class="col-xs-3">
+    <div class="row">
+        <div class="col-xs-3">
             <p ng-if="!recognized">Loading number of recognized..</p>
-           <p ng-if="recognized >= 0">Recognized: {{recognized | number}} songs.</p>
-       </div>
-       <div class="col-xs-3">
+            <p ng-if="recognized >= 0">Recognized: {{recognized | number}} songs.</p>
+        </div>
+        <div class="col-xs-3">
             <p ng-if="!queue && !queueReq">Loading number of queue..</p>
-           <p ng-if="queue >= 0">Queue: {{queue | number}} logs.</p>
-       </div>
-       <div class="col-xs-3">
-           <p ng-if="!total">Loading number of total..</p>
-           <p ng-if="total >= 0">Total: {{total | number}} logs.</p>
-       </div>
-   </div>
-<div class="row">
-    <div class="col-xs-3 " >
-        <div class="panel panel-danger" ng-click="incInc()">
-            <div class="panel-heading">Global
-                <div ng-if="inc > 10">
-                    <button ng-click="resetStatistics()" class="btn btn-primary btn-small">Reset statistics</button>
-                <p>
-                    VertexID: {{repo | number}}
-                </p>
+            <p ng-if="queue >= 0">Queue: {{queue | number}} logs.</p>
+        </div>
+        <div class="col-xs-3">
+            <p ng-if="!total">Loading number of total..</p>
+            <p ng-if="total >= 0">Total: {{total | number}} logs.</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3 ">
+            <div class="panel panel-danger" ng-click="incInc()">
+                <div class="panel-heading">Global
+                    <div ng-if="inc > 10">
+                        <button ng-click="resetStatistics()" class="btn btn-primary btn-small">Reset statistics</button>
+                        <p>
+                            VertexID: {{repo | number}}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-danger" ng-repeat="para in global | limitTo: limitServer">
+                <div class="panel-body">
+                    <center>
+                        <p style="font-weight: bold">Total for last: {{para.current}}</p>
+                        <p>Added: {{para.added | number: 2}}</p>
+                        <p>Processed: {{para.processed | number: 2}}</p>
+                        <p style="font-weight: bold">Average per item: {{para.completeProcess | number: 3}} s</p>
+                        <p>Time: {{para.timestamp | date: 'dd.MM - hh:mm:ss'}}</p>
+                    </center>
                 </div>
             </div>
         </div>
-        <div class="panel panel-danger" ng-repeat="para in global | limitTo: limitServer">
-            <div class="panel-body">
-            <center>
-            <p style="font-weight: bold">Total for last: {{para.current}}</p>
-            <p>Added: {{para.added | number: 2}}</p>
-            <p>Processed: {{para.processed | number: 2}}</p>
-                <p style="font-weight: bold">Average per item: {{para.completeProcess | number: 3}} s</p>
-                <p>Time: {{para.timestamp | date: 'dd.MM - hh:mm:ss'}}</p>
-            </center>
+
+        <div class="col-xs-3 " ng-repeat="para in items">
+            <div class="panel panel-primary">
+                <div class="panel-heading">{{para[0].name}}</div>
             </div>
+            <div class="panel panel-primary" ng-repeat="item in para | limitTo: limitServer">
+
+                <div class="panel-body">
+                    <center>
+                        <p>Per minute: {{item.perMinute | number: 2}}</p>
+                        <p>Total: {{item.total | number: 2}}</p>
+                        <p>Errored: {{item.errors | number: 2}}</p>
+                    </center>
+                </div>
+            </div>
+
         </div>
     </div>
-
-    <div class="col-xs-3 " ng-repeat="para in items">
-        <div class="panel panel-primary">
-        <div class="panel-heading">{{para[0].name}}</div>
-        </div>
-        <div class="panel panel-primary" ng-repeat="item in para | limitTo: limitServer">
-
-            <div class="panel-body">
-                <center>
-                    <p>Per minute: {{item.perMinute | number: 2}}</p>
-                    <p>Total: {{item.total | number: 2}}</p>
-                    <p>Errored: {{item.errors | number: 2}}</p>
-                </center>
-            </div>
-        </div>
-
-    </div>
-</div>
 </div>
 </body>
 </html>
