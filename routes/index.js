@@ -7,7 +7,7 @@ var path = fs.readFileSync(__dirname + '/url', 'utf-8');
 console.log(path);
 var config = {
     user: 'sa',
-    password: 'Zamp321',
+    password: 'objectX',
     server: '10.0.0.200',
     port: '5353',
     database: "MediaLoggerLogs_2016",
