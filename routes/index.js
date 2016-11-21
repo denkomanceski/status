@@ -9,7 +9,7 @@ var config = {
     user: 'zampdbadmin',
     password: 'Zamp123',
     server: 'WINDOWS-DNEP9MF',
-    port: '5353',
+    // port: '5353',
     database: "MediaLoggerLogs_2016",
 };
 function checkRecognized(cb) {
