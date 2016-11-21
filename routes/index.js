@@ -6,107 +6,107 @@ var sql = require('mssql');
 var path = fs.readFileSync(__dirname + '/url', 'utf-8');
 console.log(path);
 var config = {
-    user: 'zampdbadmin',
-    password: 'Zamp123',
-    server: '92.55.107.130',
+    user: 'sa',
+    password: 'Zamp321',
+    server: '10.0.0.200',
     port: '5353',
-    database: "dbMediaLogger",
+    database: "MediaLoggerTracks",
 };
-function checkRecognized(cb){
+function checkRecognized(cb) {
     var connection1 = new sql.Connection(config, function (err) {
-    var request = new sql.Request(connection1);
-    request.query(`
+        var request = new sql.Request(connection1);
+        request.query(`
         SELECT COUNT([ID]) as recognized
         FROM [dbo].[tblZampMediaLogItem]
         WHERE IsSong = 1 AND NumberOfChecks = 1 AND TrackID > 0
     `, (err, rows) => {
-        console.log(err, rows);
-        if(rows.length > 0)
-        cb(rows[0]);
-        else {
-            cb({"recognized": 0});
-        }
+            console.log(err, rows);
+            if (rows.length > 0)
+                cb(rows[0]);
+            else {
+                cb({"recognized": 0});
+            }
 
+        })
     })
-})
 }
 
-function checkQueue(cb){
+function checkQueue(cb) {
     var connection1 = new sql.Connection(config, function (err) {
-    var request = new sql.Request(connection1);
-    request.query(`
+        var request = new sql.Request(connection1);
+        request.query(`
          SELECT COUNT([ID]) as queue
         FROM [dbo].[tblZampMediaLogItem]
         WHERE IsSong = 1 AND NumberOfChecks = 0
     `, (err, rows) => {
-        console.log(err, rows);
-        if(rows.length > 0)
-        cb(rows[0]);
-        else {
-            cb({"queue": 0});
-        }
+            console.log(err, rows);
+            if (rows.length > 0)
+                cb(rows[0]);
+            else {
+                cb({"queue": 0});
+            }
+        })
     })
-})
 }
 
-function countAll(cb){
-     var connection1 = new sql.Connection(config, function (err) {
-    var request = new sql.Request(connection1);
-    request.query(`
+function countAll(cb) {
+    var connection1 = new sql.Connection(config, function (err) {
+        var request = new sql.Request(connection1);
+        request.query(`
          SELECT COUNT([ID]) as total
         FROM [dbo].[tblZampMediaLogItem]
     `, (err, rows) => {
-        console.log(err, rows);
-        if(rows.length > 0)
-        cb(rows[0]);
-        else {
-            cb({"total": 0});
-        }
+            console.log(err, rows);
+            if (rows.length > 0)
+                cb(rows[0]);
+            else {
+                cb({"total": 0});
+            }
+        })
     })
-})
 }
- function repo(cb){
-     var connection1 = new sql.Connection(config, function (err) {
-    var request = new sql.Request(connection1);
-    request.query(`
+function repo(cb) {
+    var connection1 = new sql.Connection(config, function (err) {
+        var request = new sql.Request(connection1);
+        request.query(`
          SELECT COUNT([ID]) as repo
         FROM [dbo].[tblZampMediaLogItem]
         WHERE IsSong = 1;
     `, (err, rows) => {
-        console.log(err, rows);
-        if(rows.length > 0)
-        cb(rows[0]);
-        else {
-            cb({"repo": 0});
-        }
+            console.log(err, rows);
+            if (rows.length > 0)
+                cb(rows[0]);
+            else {
+                cb({"repo": 0});
+            }
+        })
     })
-})
-}  
+}
 router.get('/status', function (req, res, next) {
 
     res.sendFile(__dirname + '/index.html');
 });
-router.get('/status/queue', function(req, res) {
+router.get('/status/queue', function (req, res) {
     checkQueue((data) => {
         res.send(data);
     })
 })
-router.get('/status/resetStatistics', function(req, res) {
-    fs.writeFile(path, '', function(err) {
-        res.send({done: true}); 
+router.get('/status/resetStatistics', function (req, res) {
+    fs.writeFile(path, '', function (err) {
+        res.send({done: true});
     })
 })
-router.get('/status/recognized', function(req, res) {
+router.get('/status/recognized', function (req, res) {
     checkRecognized(data => {
         res.send(data);
     })
 })
-router.get('/status/total', function(req, res) {
+router.get('/status/total', function (req, res) {
     countAll((data) => {
         res.send(data);
     })
 })
-router.get('/status/repo', function(req, res) {
+router.get('/status/repo', function (req, res) {
     repo((data) => {
         res.send(data);
     })
@@ -152,7 +152,7 @@ router.get('/status/data', function (req, res) {
             servers[lastServerName][servers[lastServerName].length - 1].perMinute = lastPerMinute;
         }
         else if (errors) {
-            servers[lastServerName][servers[lastServerName].length-1].errors = parseInt(line.substring(line.indexOf('Errored items, i.e. skipped: ')+'Errored items, i.e. skipped: '.length, line.length));
+            servers[lastServerName][servers[lastServerName].length - 1].errors = parseInt(line.substring(line.indexOf('Errored items, i.e. skipped: ') + 'Errored items, i.e. skipped: '.length, line.length));
         }
         else if (globalTotal) {
             isGlobal = true;
