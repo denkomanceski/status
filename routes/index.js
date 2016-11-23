@@ -3,13 +3,17 @@ var router = express.Router();
 var fs = require('fs');
 /* GET home page. */
 var sql = require('mssql');
-var path = fs.readFileSync(__dirname + '/url', 'utf-8');
+try {
+    var path = fs.readFileSync(__dirname + '/url', 'utf-8');
+} catch(err){
+    console.log("ERROR READING THE FILE.");
+}
 console.log(path);
 var config = {
     user: 'zampdbadmin',
     password: 'Zamp123',
     server: '10.0.0.201',
-    // port: '5353',
+    port: '5353',
     database: "MediaLoggerLogs_2016",
 };
 function checkRecognized(cb) {
@@ -32,7 +36,26 @@ function checkRecognized(cb) {
         })
     })
 }
+function checkProcessed(){
+    var connection1 = new sql.Connection(config, function (err) {
+        var request = new sql.Request(connection1);
+        request.query(`
+        SELECT COUNT([ID]) as processed
+        FROM [dbo].[tblZampMediaLogItem]
+        WHERE NumberOfChecks > 0
+    `, (err, rows) => {
+            console.log(err, rows);
+            if (rows) {
+                if (rows.length > 0)
+                    cb(rows[0]);
+            }
+            else {
+                cb({"processed": 0});
+            }
 
+        })
+    })
+}
 function checkQueue(cb) {
     var connection1 = new sql.Connection(config, function (err) {
         var request = new sql.Request(connection1);
@@ -114,6 +137,11 @@ router.get('/status/total', function (req, res) {
         res.send(data);
     })
 })
+router.get('/status/processed', function (req, res) {
+    checkProcessed((data) => {
+        res.send(data);
+    })
+})
 router.get('/status/repo', function (req, res) {
     repo((data) => {
         res.send(data);
@@ -124,9 +152,17 @@ router.get('/status/data', function (req, res) {
     var lastServerName = '';
     var lastTotalProcessed = '';
     var lastPerMinute = '';
-    var lineReader = require('readline').createInterface({
-        input: require('fs').createReadStream(path)
-    });
+    try {
+        var lineReader = require('readline').createInterface({
+            input: require('fs').createReadStream(path)
+        });
+    } catch(err) {
+        console.log("ERROR READING FILE.");
+    }
+
+    lineReader.on('error', function(){
+        console.log("ERROR READING FILE.");
+    })
     lineReader.on('close', function () {
         for (prop in servers) {
             servers[prop].reverse();

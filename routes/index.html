@@ -34,6 +34,7 @@
         }]);
         app.controller('MyCtrl', function ($scope, $http, $window) {
             var url = 'http://92.55.107.130/';
+//            var url = 'http://localhost:3000/';
             $scope.limitServer = 1;
             $scope.increase = function (para) {
                 $scope.limitServer++;
@@ -51,6 +52,7 @@
 
             $scope.refresh = function () {
                 $scope.recognized = '';
+                $scope.processed = '';
                 $scope.queue = '';
                 $scope.total = '';
                 $scope.$broadcast('timer-reset');
@@ -71,17 +73,20 @@
                     $scope.global = $scope.items.global;
                     delete $scope.items.global;
                     console.log(data);
-                })
+                });
                 $http.get(url + 'status/recognized', {headers: {'Cache-Control': 'no-cache'}}).then(function (data) {
                     $scope.recognized = data.data.recognized;
-                })
+                });
+                $http.get(url + 'status/processed', {headers: {'Cache-Control': 'no-cache'}}).then(function (data) {
+                    $scope.processed = data.data.processed;
+                });
                 $http.get(url + 'status/total', {headers: {'Cache-Control': 'no-cache'}}).then(function (data) {
                     $scope.total = data.data.total;
-                })
+                });
                 $http.get(url + 'status/queue', {headers: {'Cache-Control': 'no-cache'}}).then(function (data) {
                     $scope.queue = data.data.queue;
                     $scope.queueReq = true;
-                })
+                });
                 $http.get(url + 'status/repo', {headers: {'Cache-Control': 'no-cache'}}).then(function (data) {
                     $scope.repo = data.data.repo;
                 })
@@ -136,6 +141,16 @@
         </div>
     </div>
     <div class="row">
+        <div class="col-xs-3">
+            <p ng-if="!processed">Loading number of processed..</p>
+            <p ng-if="processed >= 0">Processed: {{processed | number: 2}} songs.</p>
+        </div>
+        <div class="col-xs-3">
+            <p ng-if="!processed && !recognized">Loading percentage..</p>
+            <p ng-if="processed && recognized">Percentage: {{recognized/processed*100 | number: 2}} logs.</p>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-xs-3 ">
             <div class="panel panel-danger" ng-click="incInc()">
                 <div class="panel-heading">Global
@@ -168,7 +183,7 @@
 
                 <div class="panel-body">
                     <center>
-                        <p>Per minute: {{item.perMinute | number: 2}}</p>
+                        <p>Per minute: {{item.perMinute}}</p>
                         <p>Total: {{item.total | number: 2}}</p>
                         <p>Errored: {{item.errors | number: 2}}</p>
                     </center>
