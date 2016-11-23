@@ -129,7 +129,11 @@ router.get('/status/resetStatistics', function (req, res) {
 })
 router.get('/status/recognized', function (req, res) {
     checkRecognized(data => {
-        res.send(data);
+        var items = data;
+        checkProcessed((data) => {
+            items.processed = data.processed
+            res.send(items);
+        })
     })
 })
 router.get('/status/total', function (req, res) {
@@ -137,11 +141,11 @@ router.get('/status/total', function (req, res) {
         res.send(data);
     })
 })
-router.get('/status/processed', function (req, res) {
-    checkProcessed((data) => {
-        res.send(data);
-    })
-})
+// router.get('/status/processed', function (req, res) {
+//     checkProcessed((data) => {
+//         res.send(data);
+//     })
+// })
 router.get('/status/repo', function (req, res) {
     repo((data) => {
         res.send(data);

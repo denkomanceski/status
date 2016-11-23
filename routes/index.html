@@ -76,10 +76,11 @@
                 });
                 $http.get(url + 'status/recognized', {headers: {'Cache-Control': 'no-cache'}}).then(function (data) {
                     $scope.recognized = data.data.recognized;
-                });
-                $http.get(url + 'status/processed', {headers: {'Cache-Control': 'no-cache'}}).then(function (data) {
                     $scope.processed = data.data.processed;
                 });
+//                $http.get(url + 'status/processed', {headers: {'Cache-Control': 'no-cache'}}).then(function (data) {
+//                    $scope.processed = data.data.processed;
+//                });
                 $http.get(url + 'status/total', {headers: {'Cache-Control': 'no-cache'}}).then(function (data) {
                     $scope.total = data.data.total;
                 });
