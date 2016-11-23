@@ -36,7 +36,7 @@ function checkRecognized(cb) {
         })
     })
 }
-function checkProcessed(){
+function checkProcessed(cb){
     var connection1 = new sql.Connection(config, function (err) {
         var request = new sql.Request(connection1);
         request.query(`
