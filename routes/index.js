@@ -27,7 +27,7 @@ var config = {
 };
 function checkRecognized(cb, date) {
     date = (date) ?
-        `AND PlayDate >= '${date.start}' AND PlayDate <= '${date.end}'` : '' //'2016-12-21'
+        `AND MONTH(PlayDate) >= ${date.start} AND MONTH(PlayDate) <= ${date.end}` : '' //'2016-12-21'
     var connection1 = new sql.Connection(config, function (err) {
         var request = new sql.Request(connection1);
         request.query(`
@@ -49,7 +49,7 @@ function checkRecognized(cb, date) {
 }
 function checkProcessed(cb, date) {
     date = (date) ?
-        `AND PlayDate >= '${date.start}' AND PlayDate <= '${date.end}'` : '' //'2016-12-21'
+        `AND MONTH(PlayDate) >= ${date.start} AND MONTH(PlayDate) <= ${date.end}` : '' //'2016-12-21'
     var connection1 = new sql.Connection(config, function (err) {
         var request = new sql.Request(connection1);
         request.query(`
@@ -71,7 +71,7 @@ function checkProcessed(cb, date) {
 }
 function checkQueue(cb, date) {
     date = (date) ?
-        `AND PlayDate >= '${date.start}' AND PlayDate <= '${date.end}'` : '' //'2016-12-21'
+        `AND MONTH(PlayDate) >= ${date.start} AND MONTH(PlayDate) <= ${date.end}` : '' //'2016-12-21'
     var connection1 = new sql.Connection(config, function (err) {
         var request = new sql.Request(connection1);
         request.query(`
@@ -93,7 +93,7 @@ function checkQueue(cb, date) {
 
 function countAll(cb, date) {
     date = (date) ?
-        `WHERE PlayDate >= '${date.start}' AND PlayDate <= '${date.end}'` : '' //'2016-12-21'
+        `WHERE MONTH(PlayDate) >= ${date.start} AND MONTH(PlayDate) <= ${date.end}` : '' //'2016-12-21'
 
     var connection1 = new sql.Connection(config, function (err) {
         var request = new sql.Request(connection1);
@@ -114,7 +114,7 @@ function countAll(cb, date) {
 }
 function repo(cb, date) {
     date = (date) ?
-        `AND PlayDate >= '${date.start}' AND PlayDate <= '${date.end}'` : '' //'2016-12-21'
+        `AND MONTH(PlayDate) >= ${date.start} AND MONTH(PlayDate) <= ${date.end}` : '' //'2016-12-21'
     var connection1 = new sql.Connection(config, function (err) {
         var request = new sql.Request(connection1);
         request.query(`

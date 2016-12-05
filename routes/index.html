@@ -71,7 +71,8 @@
             $scope.toDate = '';
             function getParams() {
                 function format(date) {
-                    return $filter('date')(date, 'MM-dd-yyyy')
+//                    return $filter('date')(date, 'MM-dd-yyyy')
+                    return date;
                 }
 
                 if ($scope.fromDate && $scope.toDate)
@@ -143,8 +144,8 @@
 <div class="container">
     <div class="row" style="margin-bottom: 50px">
         <div class="col-xs-12 form-inline">
-            From: <input ng-model="fromDate" type="date" class="form-control">
-            To: <input ng-model="toDate" type="date" class="form-control">
+            From: <input ng-model="fromDate" type="number" class="form-control">
+            To: <input ng-model="toDate" type="number" class="form-control">
             <button class="btn btn-primary" ng-click="refresh()">Query</button>
         </div>
     </div>
