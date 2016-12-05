@@ -1,5 +1,3 @@
-
-
 var express = require('express');
 var router = express.Router();
 var fs = require('fs');
@@ -11,19 +9,14 @@ try {
     console.log("ERROR READING THE FILE.");
 }
 console.log(path);
-/*var config = {
+var config = {
+
     user: 'sa',
     password: 'objectX',
     server: '10.0.0.25',
-    //port: '5353',
-    database: "MediaLoggerLogs_2015",
-};*/
-var config = {
-    user: 'zampdbadmin',
-    password: 'Zamp123',
-    server: '25.41.188.214',
-    port: '5353',
-    database: "MediaLoggerLogs_2016",
+    //port: '1433',
+    database: "MediaLoggerLogs_2015"
+	//database: "MediaLoggerTracks",
 };
 function checkRecognized(cb) {
     var connection1 = new sql.Connection(config, function (err) {
@@ -180,7 +173,6 @@ router.get('/status/data', function (req, res) {
         for (prop in servers) {
             servers[prop].reverse();
         }
-		console.log("CLOSING...");
         res.send(servers);
     })
     var isGlobal = false;
@@ -232,7 +224,7 @@ router.get('/status/data', function (req, res) {
             servers['global'][servers['global'].length - 1].completeProcess = line.substring(line.indexOf('Average time per item COMPLETE PROCESS: ') + 'Average time per item COMPLETE PROCESS: '.length, line.length - 3)
             isGlobal = false;
         }
-       // console.log('Line from file:', line);
+        console.log('Line from file:', line);
     });
 })
 function putInfo() {

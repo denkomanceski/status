@@ -33,8 +33,12 @@
 
         }]);
         app.controller('MyCtrl', function ($scope, $http, $window) {
-            var url = 'http://10.0.0.25:3000/';
+
+//            var url = 'http://92.55.107.130/';
 //            var url = 'http://localhost:3000/';
+
+            var url = 'http://10.0.0.25:3000/';
+
             $scope.limitServer = 1;
             $scope.increase = function (para) {
                 $scope.limitServer++;
@@ -107,7 +111,7 @@
         <ul class="nav navbar-nav">
             <li><a href="#">Autorefresh in: </a></li>
             <li class="active"><a href="#">
-                <timer interval="1000" max-time-unit="'minute'" finish-callback="refresh()" countdown="600">{{mminutes}}
+                <timer interval="1000" max-time-unit="'minute'" finish-callback="refresh()" countdown="120">{{mminutes}}
                     minute{{minutesS}}, {{sseconds}} second{{secondsS}}
                 </timer>
                 <span class="sr-only">(current)</span></a></li>
@@ -144,7 +148,7 @@
     <div class="row">
         <div class="col-xs-3">
             <p ng-if="!processed">Loading number of processed..</p>
-            <p ng-if="processed >= 0">Processed: {{processed | number}} songs.</p>
+            <p ng-if="processed >= 0">Processed: {{processed | number: 2}} songs.</p>
         </div>
         <div class="col-xs-3">
             <p ng-if="!processed && !recognized">Loading percentage..</p>
@@ -168,8 +172,8 @@
                     <center>
                         <p style="font-weight: bold">Total for last: {{para.current}}</p>
                         <p>Added: {{para.added | number: 2}}</p>
-                        <p>Processed: {{para.processed}}</p>
-                        <p style="font-weight: bold">Average per item: {{para.completeProcess}} s</p>
+                        <p>Processed: {{para.processed | number: 2}}</p>
+                        <p style="font-weight: bold">Average per item: {{para.completeProcess | number: 3}} s</p>
                         <p>Time: {{para.timestamp | date: 'dd.MM - hh:mm:ss'}}</p>
                     </center>
                 </div>
