@@ -32,8 +32,10 @@
             $httpProvider.defaults.headers.get["If-Modified-Since"] = "Sat, 01 Jan 2000 00:00:00 GMT";
 
         }]);
-        app.controller('MyCtrl', function ($scope, $http, $window) {
-            var url = 'http://10.0.0.25:3000/';
+        app.controller('MyCtrl', function ($scope, $http, $window, $filter) {
+//            var url = 'http://92.55.107.130/';
+            var url = 'http://localhost:3000/';
+            //var url = 'http://10.0.0.25:3000/';
 //            var url = 'http://localhost:3000/';
             $scope.limitServer = 1;
             $scope.increase = function (para) {
@@ -65,34 +67,46 @@
                     $window.location.reload();
                 })
             }
+            $scope.fromDate = '';
+            $scope.toDate = '';
+            function getParams() {
+                function format(date) {
+                    return $filter('date')(date, 'MM-dd-yyyy')
+                }
+
+                if ($scope.fromDate && $scope.toDate)
+                    return '?start=' + format($scope.fromDate) + '&end=' + format($scope.toDate);
+                else return '';
+            }
+
             $scope.getData = function () {
                 $scope.queueReq = false;
-                $http.get(url + 'status/data').then(function (data) {
+                $http.get(url + 'status/data' + getParams()).then(function (data) {
                     data = data.data;
                     $scope.items = data;
                     $scope.global = $scope.items.global;
                     delete $scope.items.global;
                     console.log(data);
                 });
-                $http.get(url + 'status/recognized', {headers: {'Cache-Control': 'no-cache'}}).then(function (data) {
+                $http.get(url + 'status/recognized' + getParams(), {headers: {'Cache-Control': 'no-cache'}}).then(function (data) {
                     $scope.recognized = data.data.recognized;
                     $scope.processed = data.data.processed;
                 });
 //                $http.get(url + 'status/processed', {headers: {'Cache-Control': 'no-cache'}}).then(function (data) {
 //                    $scope.processed = data.data.processed;
 //                });
-                $http.get(url + 'status/total', {headers: {'Cache-Control': 'no-cache'}}).then(function (data) {
+                $http.get(url + 'status/total' + getParams(), {headers: {'Cache-Control': 'no-cache'}}).then(function (data) {
                     $scope.total = data.data.total;
                 });
-                $http.get(url + 'status/queue', {headers: {'Cache-Control': 'no-cache'}}).then(function (data) {
+                $http.get(url + 'status/queue' + getParams(), {headers: {'Cache-Control': 'no-cache'}}).then(function (data) {
                     $scope.queue = data.data.queue;
                     $scope.queueReq = true;
                 });
-                $http.get(url + 'status/repo', {headers: {'Cache-Control': 'no-cache'}}).then(function (data) {
+                $http.get(url + 'status/repo' + getParams(), {headers: {'Cache-Control': 'no-cache'}}).then(function (data) {
                     $scope.repo = data.data.repo;
                 })
             }
-            $scope.getData();
+//            $scope.getData();
 
         })
     </script>
@@ -127,6 +141,13 @@
     </div><!-- /.container-fluid -->
 </nav>
 <div class="container">
+    <div class="row" style="margin-bottom: 50px">
+        <div class="col-xs-12 form-inline">
+            From: <input ng-model="fromDate" type="date" class="form-control">
+            To: <input ng-model="toDate" type="date" class="form-control">
+            <button class="btn btn-primary" ng-click="refresh()">Query</button>
+        </div>
+    </div>
     <div class="row">
         <div class="col-xs-3">
             <p ng-if="!recognized">Loading number of recognized..</p>

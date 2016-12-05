@@ -1,37 +1,39 @@
-
-
 var express = require('express');
 var router = express.Router();
 var fs = require('fs');
+var moment = require('moment');
 /* GET home page. */
 var sql = require('mssql');
 try {
     var path = fs.readFileSync(__dirname + '/url', 'utf-8');
-} catch(err){
+} catch (err) {
     console.log("ERROR READING THE FILE.");
 }
 console.log(path);
 /*var config = {
-    user: 'sa',
-    password: 'objectX',
-    server: '10.0.0.25',
-    //port: '5353',
-    database: "MediaLoggerLogs_2015",
-};*/
+ user: 'sa',
+ password: 'objectX',
+ server: '10.0.0.25',
+ //port: '5353',
+ database: "MediaLoggerLogs_2015",
+ };*/
 var config = {
     user: 'zampdbadmin',
     password: 'Zamp123',
-    server: '25.41.188.214',
+    server: '92.55.107.130',
     port: '5353',
     database: "MediaLoggerLogs_2016",
+    requestTimeout: 120000
 };
-function checkRecognized(cb) {
+function checkRecognized(cb, date) {
+    date = (date) ?
+        `AND PlayDate >= '${date.start}' AND PlayDate <= '${date.end}'` : '' //'2016-12-21'
     var connection1 = new sql.Connection(config, function (err) {
         var request = new sql.Request(connection1);
         request.query(`
         SELECT COUNT([ID]) as recognized
         FROM [dbo].[tblZampMediaLogItem]
-        WHERE IsSong = 1 AND NumberOfChecks = 1 AND TrackID > 0
+        WHERE IsSong = 1 AND NumberOfChecks = 1 AND TrackID > 0 ${date}
     `, (err, rows) => {
             console.log(err, rows);
             if (rows) {
@@ -45,13 +47,15 @@ function checkRecognized(cb) {
         })
     })
 }
-function checkProcessed(cb){
+function checkProcessed(cb, date) {
+    date = (date) ?
+        `AND PlayDate >= '${date.start}' AND PlayDate <= '${date.end}'` : '' //'2016-12-21'
     var connection1 = new sql.Connection(config, function (err) {
         var request = new sql.Request(connection1);
         request.query(`
         SELECT COUNT([ID]) as processed
         FROM [dbo].[tblZampMediaLogItem]
-        WHERE NumberOfChecks > 0
+        WHERE NumberOfChecks > 0 ${date}
     `, (err, rows) => {
             console.log(err, rows);
             if (rows) {
@@ -65,13 +69,15 @@ function checkProcessed(cb){
         })
     })
 }
-function checkQueue(cb) {
+function checkQueue(cb, date) {
+    date = (date) ?
+        `AND PlayDate >= '${date.start}' AND PlayDate <= '${date.end}'` : '' //'2016-12-21'
     var connection1 = new sql.Connection(config, function (err) {
         var request = new sql.Request(connection1);
         request.query(`
          SELECT COUNT([ID]) as queue
         FROM [dbo].[tblZampMediaLogItem]
-        WHERE IsSong = 1 AND NumberOfChecks = 0
+        WHERE IsSong = 1 AND NumberOfChecks = 0 ${date}
     `, (err, rows) => {
             console.log(err, rows);
             if (rows) {
@@ -85,12 +91,15 @@ function checkQueue(cb) {
     })
 }
 
-function countAll(cb) {
+function countAll(cb, date) {
+    date = (date) ?
+        `WHERE PlayDate >= '${date.start}' AND PlayDate <= '${date.end}'` : '' //'2016-12-21'
+
     var connection1 = new sql.Connection(config, function (err) {
         var request = new sql.Request(connection1);
         request.query(`
          SELECT COUNT([ID]) as total
-        FROM [dbo].[tblZampMediaLogItem]
+        FROM [dbo].[tblZampMediaLogItem] ${date}
     `, (err, rows) => {
             console.log(err, rows);
             if (rows) {
@@ -103,13 +112,15 @@ function countAll(cb) {
         })
     })
 }
-function repo(cb) {
+function repo(cb, date) {
+    date = (date) ?
+        `AND PlayDate >= '${date.start}' AND PlayDate <= '${date.end}'` : '' //'2016-12-21'
     var connection1 = new sql.Connection(config, function (err) {
         var request = new sql.Request(connection1);
         request.query(`
          SELECT COUNT([ID]) as repo
         FROM [dbo].[tblZampMediaLogItem]
-        WHERE IsSong = 1;
+        WHERE IsSong = 1 ${date}; 
     `, (err, rows) => {
             console.log(err, rows);
             if (rows) {
@@ -127,9 +138,10 @@ router.get('/status', function (req, res, next) {
     res.sendFile(__dirname + '/index.html');
 });
 router.get('/status/queue', function (req, res) {
+    var date = getDate(req);
     checkQueue((data) => {
         res.send(data);
-    })
+    }, date)
 })
 router.get('/status/resetStatistics', function (req, res) {
     fs.writeFile(path, '', function (err) {
@@ -137,18 +149,20 @@ router.get('/status/resetStatistics', function (req, res) {
     })
 })
 router.get('/status/recognized', function (req, res) {
+    var date = getDate(req);
     checkRecognized(data => {
         var items = data;
         checkProcessed((data) => {
             items.processed = data.processed
             res.send(items);
-        })
-    })
+        }, date)
+    }, date)
 })
 router.get('/status/total', function (req, res) {
+    var date = getDate(req);
     countAll((data) => {
         res.send(data);
-    })
+    }, date)
 })
 // router.get('/status/processed', function (req, res) {
 //     checkProcessed((data) => {
@@ -156,11 +170,19 @@ router.get('/status/total', function (req, res) {
 //     })
 // })
 router.get('/status/repo', function (req, res) {
+    var date = getDate(req);
     repo((data) => {
         res.send(data);
-    })
+    }, date)
 })
+function getDate(req) {
+    return req.query.start && req.query.end ? {
+        start: req.query.start,
+        end: req.query.end
+    } : '';
+}
 router.get('/status/data', function (req, res) {
+
     var servers = {global: []};
     var lastServerName = '';
     var lastTotalProcessed = '';
@@ -169,18 +191,19 @@ router.get('/status/data', function (req, res) {
         var lineReader = require('readline').createInterface({
             input: require('fs').createReadStream(path)
         });
-    } catch(err) {
+    } catch (err) {
         console.log("ERROR READING FILE.");
     }
 
-    lineReader.on('error', function(){
+    lineReader.on('error', function () {
         console.log("ERROR READING FILE.");
     })
     lineReader.on('close', function () {
+        console.log("CLOSING...");
         for (prop in servers) {
             servers[prop].reverse();
         }
-		console.log("CLOSING...");
+        console.log("CLOSING...");
         res.send(servers);
     })
     var isGlobal = false;
@@ -232,7 +255,7 @@ router.get('/status/data', function (req, res) {
             servers['global'][servers['global'].length - 1].completeProcess = line.substring(line.indexOf('Average time per item COMPLETE PROCESS: ') + 'Average time per item COMPLETE PROCESS: '.length, line.length - 3)
             isGlobal = false;
         }
-       // console.log('Line from file:', line);
+        // console.log('Line from file:', line);
     });
 })
 function putInfo() {
