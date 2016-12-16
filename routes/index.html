@@ -250,6 +250,7 @@
                 <div class="panel-body">
                     <center>
                         <p>Per minute: {{item.perMinute}}</p>
+                        <p>Processed: {{item.total - para[$index+1].total}}</p>
                         <p>Total: {{item.total | number: 2}}</p>
                         <p>Errored: {{item.errors | number: 2}}</p>
                     </center>
