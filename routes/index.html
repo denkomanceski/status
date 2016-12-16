@@ -14,6 +14,10 @@
         .panel-danger > .panel-body {
             border-left: 3px solid #a94442 !important;
         }
+
+        .panel-success > .panel-body {
+            border-left: 3px solid #dff0d8 !important;
+        }
     </style>
     <script src="bower_components/humanize-duration/humanize-duration.js"></script>
     <script src="bower_components/moment/min/moment.min.js"></script>
@@ -67,6 +71,8 @@
                     $window.location.reload();
                 })
             }
+
+            $scope.statisticsAveraging = [];
             $scope.fromDate = '';
             $scope.toDate = '';
             function getParams() {
@@ -102,6 +108,25 @@
                 $http.get(url + 'status/queue' + getParams(), {headers: {'Cache-Control': 'no-cache'}}).then(function (data) {
                     $scope.queue = data.data.queue;
                     $scope.queueReq = true;
+                    var stats = {};
+                    if ($scope.statisticsAveraging.length > 0) {
+                        var lastItem = $scope.statisticsAveraging[$scope.statisticsAveraging.length - 1];
+                        var duration = moment.duration(new Date() - lastItem.timestamp);
+                        stats = {
+                            difference: lastItem.value - data.data.queue,
+                            timestampDifference: moment.utc(duration.asMilliseconds()).format("mm:ss"),
+                            timestamp: new Date(),
+                            value: data.data.queue
+                        }
+                        $scope.statisticsAveraging.unshift(stats);
+                    } else {
+                        $scope.statisticsAveraging.unshift({
+                            difference: 0,
+                            timestampDifference: 0,
+                            timestamp: new Date(),
+                            value: data.data.queue
+                        })
+                    }
                 });
                 $http.get(url + 'status/repo' + getParams(), {headers: {'Cache-Control': 'no-cache'}}).then(function (data) {
                     $scope.repo = data.data.repo;
@@ -147,6 +172,24 @@
             From: <input ng-model="fromDate" type="number" class="form-control">
             To: <input ng-model="toDate" type="number" class="form-control">
             <button class="btn btn-primary" ng-click="refresh()">Query</button>
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 50px">
+        <div class="col-xs-4">
+            <div class="panel panel-success">
+                <div class="panel-heading">Overtime statistics
+                </div>
+            </div>
+            <div class="panel panel-success" ng-repeat="stat in statisticsAveraging">
+                <div class="panel-body">
+                    <div>
+                        <p>Queue: <b>{{stat.value | number}}</b></p>
+                        <p>Timestamp: <b>{{stat.timestamp | date: 'dd.MM - hh:mm:ss'}}</b></p>
+                        <p>Difference previous: <b>{{stat.difference | number }}</b></p>
+                        <p>Difference previous (timestamp): <b>{{stat.timestampDifference}}</b></p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="row">
